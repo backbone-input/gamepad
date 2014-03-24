@@ -2,5 +2,5 @@
 	"name": "backbone.input.gamepad",
 	"version": "0.1.0",
 	"main": ["./backbone.input.gamepad.js"],
-	"dependencies": { "backbone", "underscore", }
+	"dependencies": { "backbone", "underscore" }
 }
