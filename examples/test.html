@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!--
+
+Gamepad API Test
+
+Based on the example written in 2013 by Ted Mielczarek <ted@mielczarek.org>
+
+-->
+<style>
+.buttons, .axes {
+	padding: 1em;
+}
+
+.button {
+	padding: 1em;
+	border-radius: 20px;
+	border: 1px solid black;
+	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAAXNSR0IArs4c6QAAAAxJREFUCNdjYPjPAAACAgEAqiqeJwAAAABJRU5ErkJggg==);
+	background-size: 0% 0%;
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+}
+
+.pressed {
+	border: 1px solid red;
+}
+</style>
+</head>
+<body>
+
+<h2 id="start">Press a button on your controller to start</h2>
+
+<div id="main"></div>
+
+
+<!-- libs -->
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
+<script type="text/javascript" src="//code.jquery.com/jquery-2.1.0.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
+
+<!-- plugin -->
+<script type="text/javascript" src="../backbone.input.gamepad.js"></script>
+
+
+<!-- example -->
+<script type="text/template" class="template">
+
+	<div id="controller<%=gamepad.index %>">
+		<h1>gamepad: <%=gamepad.id %></h1>
+		<div class="buttons">
+		<% _.each(gamepad.buttons, function(button, i){
+			var val = button;
+			var pressed = val;
+			if (typeof button == "object") {
+				pressed = button.pressed;
+				val = button.value;
+			}
+			var pct = Math.round(val * 100) + "%";
+			%>
+			<span class="button <% if( pressed ) { %> pressed <% } %>" style="background-size: <%- pct + " " + pct %>"><%- i %></span>
+			<% }); %>
+		</div>
+		<div class="axes">
+			<% _.each(gamepad.axes, function(axes, i){ console.log(axes, axes.toFixed(4)); %>
+				<progress class="axis" max="2" value="<%- axes +1 %>"><%- i %> : <%- axes.toFixed(4) %></progress>
+			<% }); %>
+		</div>
+	</div>
+
+</script>
+<script type="text/javascript">
+	_.templateSettings.variable = "gamepad";
+
+	var Main = Backbone.View.extend({
+		el: "#main",
+		options: {
+			monitor: ["gamepad"]
+		},
+
+		views: {},
+
+		onConnectGamepad: function( e ){
+			this.views[e.gamepad.index] = new Gamepad({
+				model: new Backbone.Model( e.gamepad )
+			});
+		},
+
+		onDisconnectGamepad: function( e ){
+			this.views[e.gamepad.index].remove();
+			delete this.views[e.gamepad.index];
+		},
+
+		updateGamepads: function( e ){
+			for (j in this.views) {
+				var view = this.views[j];
+				var data = this.params.get("gamepads");
+				view.update( data[j] );
+			}
+		}
+	});
+
+	var Gamepad = Backbone.View.extend({
+
+		el: function(){
+			return $("<div></div>").appendTo(this.options.parentEl);
+		},
+
+		options: {
+			parentEl: "#main"
+		},
+
+		template: _.template( $( "script.template" ).html() ),
+
+		initialize: function( options ){
+			this.model = options.model;
+			//
+			this.render();
+		},
+
+		render: function(){
+			var html = this.template( this.model.toJSON() );
+			$(this.el).html( html );
+		},
+
+		update: function( data ){
+			this.model.set(data);
+			// control when to re-render or use jquery instead?
+			this.render();
+		}
+	});
+
+	// initialize
+	var view = new Main();
+	view.render();
+
+</script>
+
+</body>
+</html>
