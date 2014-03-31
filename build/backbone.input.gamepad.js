@@ -2,7 +2,7 @@
  * @name backbone.input.gamepad
  * Gamepad event bindings for Backbone views
  *
- * Version: 0.1.1 (Mon, 31 Mar 2014 10:26:02 GMT)
+ * Version: 0.1.1 (Mon, 31 Mar 2014 10:39:10 GMT)
  * Homepage: https://github.com/backbone-input/gamepad
  *
  * @author makesites
@@ -20,6 +20,16 @@
 	var getGamepads = navigator.webkitGetGamepads || navigator.getGamepads || false;
 	var scanInterval;
 
+
+
+	// Map buttons to key press
+	var buttonMap = {
+		// Key name convention taken from UDK's GFxProjectedUI.uc UnrealScript class file (\Src\UTGame\Classes\)
+		// order matches the order returned from the navigator.getGamepads object
+		xbox: ["A", "B", "X", "Y", "LeftShoulder", "RightShoulder", "LeftTrigger", "RightTrigger", "Back", "Start", "LeftThumbstick", "RightThumbstick", "DPad_Up", "DPad_Down", "DPad_Left", "DPad_Right"],
+		playstation: [], //TBA
+		steam: [] //TBA
+	};
 
 
 	var Gamepad = View.extend({
