@@ -2,7 +2,7 @@
  * @name backbone.input.gamepad
  * Gamepad event bindings for Backbone views
  *
- * Version: 0.1.1 (Mon, 31 Mar 2014 10:39:10 GMT)
+ * Version: 0.1.1 (Mon, 31 Mar 2014 10:43:38 GMT)
  * Homepage: https://github.com/backbone-input/gamepad
  *
  * @author makesites
@@ -154,6 +154,11 @@
 			if(this.updateGamepads) this.updateGamepads( e );
 			// repeat on animation frame
 			tick.call( window, _.bind(this._updateGamepads, this) );
+		},
+
+		_buttonKey: function( number ){
+			// only support xbox for now?
+			return buttonMap.xbox[ number ];
 		}
 
 	});
