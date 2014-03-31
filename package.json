@@ -1,0 +1,29 @@
+{
+	"name": "backbone.input.gamepad",
+	"version": "0.1.1",
+	"author": "makesites",
+	"description": "Gamepad event bindings for Backbone views",
+	"homepage": "https://github.com/backbone-input/gamepad",
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/backbone-input/gamepad.git"
+	},
+	"bugs": {
+		"url": "https://github.com/backbone-input/gamepad/issues"
+	},
+	"licenses": [
+		{
+			"type": "MIT license",
+			"url": "http://makesites.org/licenses/MIT"
+		}
+	],
+	"engine" : {
+		"node" : ">=0.8.x"
+	},
+	"dependencies": {
+		"commander" : "~0.5",
+		"jshint" : "~0.9",
+		"uglify-js" : "2.x",
+		"hbs" : "~1.0"
+	}
+}
