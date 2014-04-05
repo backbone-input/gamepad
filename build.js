@@ -24,6 +24,7 @@ _handlebars.registerHelper('license', function(items){
 concat({
 	src : [
 		'lib/buttons.js',
+		'lib/params.js',
 		'lib/view.js',
 		'lib/helpers.js'
 	],

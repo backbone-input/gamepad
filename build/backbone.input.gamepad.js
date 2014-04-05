@@ -2,7 +2,7 @@
  * @name backbone.input.gamepad
  * Gamepad event bindings for Backbone views
  *
- * Version: 0.2.0 (Sat, 05 Apr 2014 00:59:50 GMT)
+ * Version: 0.2.0 (Sat, 05 Apr 2014 01:06:52 GMT)
  * Homepage: https://github.com/backbone-input/gamepad
  *
  * @author makesites
@@ -30,6 +30,14 @@
 		playstation: [], //TBA
 		steam: [] //TBA
 	};
+
+// extend existing params
+var params = View.prototype.params || new Backbone.Model();
+
+// defaults
+params.set({
+	gamepads: {}
+});
 
 
 	var Gamepad = View.extend({
