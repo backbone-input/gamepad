@@ -2,7 +2,7 @@
  * @name backbone.input.gamepad
  * Gamepad event bindings for Backbone views
  *
- * Version: 0.2.0 (Sat, 05 Apr 2014 01:06:52 GMT)
+ * Version: 0.2.0 (Sun, 03 Aug 2014 03:56:04 GMT)
  * Homepage: https://github.com/backbone-input/gamepad
  *
  * @author makesites
@@ -17,7 +17,7 @@
 	// support for Backbone APP() view if available...
 	var isAPP = ( typeof APP !== "undefined" && typeof APP.View !== "undefined" );
 	var View = ( isAPP ) ? APP.View : Backbone.View;
-	var getGamepads = navigator.webkitGetGamepads || navigator.getGamepads || false;
+	var getGamepads = navigator.getGamepads || navigator.webkitGetGamepads || false;
 	var scanInterval;
 
 
@@ -193,9 +193,9 @@ params.set({
 		}
 	});
 
-	var tick = window.mozRequestAnimationFrame ||
-	window.webkitRequestAnimationFrame ||
-	window.requestAnimationFrame;
+	var tick = window.requestAnimationFrame ||
+	window.mozRequestAnimationFrame ||
+	window.webkitRequestAnimationFrame;
 
 
 
