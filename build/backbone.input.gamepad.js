@@ -2,7 +2,7 @@
  * @name backbone.input.gamepad
  * Gamepad event bindings for Backbone views
  *
- * Version: 0.2.0 (Sun, 03 Aug 2014 03:56:04 GMT)
+ * Version: 0.2.0 (Mon, 04 Aug 2014 09:11:43 GMT)
  * Homepage: https://github.com/backbone-input/gamepad
  *
  * @author makesites
@@ -49,6 +49,7 @@ params.set({
 		params: params,
 
 		state : {
+			gamepadButtons: []
 		},
 
 		initialize: function( options ) {
