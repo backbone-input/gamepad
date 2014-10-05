@@ -2,7 +2,7 @@
  * @name backbone.input.gamepad
  * Gamepad event bindings for Backbone views
  *
- * Version: 0.2.0 (Mon, 04 Aug 2014 09:11:43 GMT)
+ * Version: 0.2.0 (Sun, 05 Oct 2014 12:54:27 GMT)
  * Homepage: https://github.com/backbone-input/gamepad
  *
  * @author makesites
@@ -54,8 +54,9 @@ params.set({
 
 		initialize: function( options ) {
 			// prerequisite
-			if( this.options.monitor || options.monitor ){
-				this.monitor();
+			if(options.monitor) _.extend(this.options.monitor, options.monitor);
+			if( _.inArray("gamepad", this.options.monitor) ){
+				this.monitorGamepad();
 				tick( _.bind(this._updateGamepads, this) );
 			}
 			// continue...
@@ -63,7 +64,7 @@ params.set({
 		},
 
 		/* events:*/
-		monitor: function( state ){
+		monitorGamepad: function( state ){
 			// fallback
 			if(typeof state == "undefined") state = true;
 
@@ -94,7 +95,7 @@ params.set({
 		_onConnectGamepad: function( e ) {
 			// prerequisite
 			var monitor = _.inArray("gamepad", this.options.monitor);
-			if( !monitor ) return this.monitor(false);
+			if( !monitor ) return this.monitorGamepad(false);
 			// variables
 			var gamepad = e.gamepad || e.detail.gamepad;
 			// copy data to the event root
@@ -116,7 +117,7 @@ params.set({
 		_onDisconnectGamepad: function( e ) {
 			// prerequisite
 			var monitor = _.inArray("gamepad", this.options.monitor);
-			if( !monitor ) return this.monitor(false);
+			if( !monitor ) return this.monitorGamepad(false);
 			// flags
 			if( _.inDebug() ) console.log("disconnect", e);
 			if (e.stopPropagation) e.stopPropagation();
@@ -156,7 +157,7 @@ params.set({
 
 		_updateGamepads: function( e ){
 			var monitor = _.inArray("gamepad", this.options.monitor);
-			if( !monitor ) return this.monitor(false);
+			if( !monitor ) return this.monitorGamepad(false);
 			this.trigger("updateGamepads", e);
 			if(this.updateGamepads) this.updateGamepads( e );
 			// repeat on animation frame
@@ -185,7 +186,8 @@ params.set({
 
 	_.mixin({
 		inArray: function(value, array){
-			return array.indexOf(value) > -1;
+			// if not an array just output false
+			return ( array instanceof Array ) ? (array.indexOf(value) > -1) : false;
 		},
 		// - Check if in debug mode (requires the existence of a global DEBUG var)
 		// Usage: _.inDebug()
