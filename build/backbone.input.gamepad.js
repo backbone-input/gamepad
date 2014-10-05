@@ -2,7 +2,7 @@
  * @name backbone.input.gamepad
  * Gamepad event bindings for Backbone views
  *
- * Version: 0.2.0 (Sun, 05 Oct 2014 12:54:27 GMT)
+ * Version: 0.2.0 (Sun, 05 Oct 2014 23:23:10 GMT)
  * Homepage: https://github.com/backbone-input/gamepad
  *
  * @author makesites
@@ -17,6 +17,7 @@
 	// support for Backbone APP() view if available...
 	var isAPP = ( typeof APP !== "undefined" && typeof APP.View !== "undefined" );
 	var View = ( isAPP ) ? APP.View : Backbone.View;
+	var Layout = ( isAPP ) ? APP.Layout : false;
 	var getGamepads = navigator.getGamepads || navigator.webkitGetGamepads || false;
 	var scanInterval;
 
@@ -40,28 +41,7 @@ params.set({
 });
 
 
-	var Gamepad = View.extend({
-
-		options: {
-			monitor: [] // possible values: "gamepad"
-		},
-
-		params: params,
-
-		state : {
-			gamepadButtons: []
-		},
-
-		initialize: function( options ) {
-			// prerequisite
-			if(options.monitor) _.extend(this.options.monitor, options.monitor);
-			if( _.inArray("gamepad", this.options.monitor) ){
-				this.monitorGamepad();
-				tick( _.bind(this._updateGamepads, this) );
-			}
-			// continue...
-			return View.prototype.initialize.call(this, options);
-		},
+	var methods = {
 
 		/* events:*/
 		monitorGamepad: function( state ){
@@ -169,8 +149,62 @@ params.set({
 			return buttonMap.xbox[ number ];
 		}
 
-	});
+	};
 
+
+	var Gamepad = View.extend( _.extend({}, methods, {
+
+		options: {
+			monitor: [] // possible values: "gamepad"
+		},
+
+		params: params,
+
+		state : {
+			gamepadButtons: []
+		},
+
+		initialize: function( options ) {
+			// prerequisite
+			if(options.monitor) _.extend(this.options.monitor, options.monitor);
+			if( _.inArray("gamepad", this.options.monitor) ){
+				this.monitorGamepad();
+				tick( _.bind(this._updateGamepads, this) );
+			}
+			// continue...
+			return View.prototype.initialize.call(this, options);
+		}
+
+	}) );
+
+var GamepadLayout;
+if( Layout ){
+	GamepadLayout = Layout.extend( _.extend({}, methods, {
+
+		options: {
+			monitor: [] // possible values: "gamepad"
+		},
+
+		params: params, // create different params for the layout?
+
+		state : {
+			gamepadButtons: []
+		},
+
+		initialize: function( options ) {
+			// prerequisite
+			if(options.monitor) _.extend(this.options.monitor, options.monitor);
+			if( _.inArray("gamepad", this.options.monitor) ){
+				this.monitorGamepad();
+				tick( _.bind(this._updateGamepads, this) );
+			}
+			// continue...
+			return Layout.prototype.initialize.call(this, options);
+		}
+
+	}) );
+
+}
 
 	// Helpers
 
@@ -224,6 +258,7 @@ params.set({
 		// update APP namespace
 		if( isAPP ){
 			APP.View = Gamepad;
+			APP.Layout = GamepadLayout;
 			APP.Input = APP.Input || {};
 			APP.Input.Gamepad = Backbone.Input.Gamepad;
 			// save namespace

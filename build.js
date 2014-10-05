@@ -25,7 +25,9 @@ concat({
 	src : [
 		'lib/buttons.js',
 		'lib/params.js',
+		'lib/methods.js',
 		'lib/view.js',
+		'lib/layout.js',
 		'lib/helpers.js'
 	],
 	dest : 'build/backbone.input.gamepad.js'
