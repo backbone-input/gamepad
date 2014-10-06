@@ -2,7 +2,7 @@
  * @name backbone.input.gamepad
  * Gamepad event bindings for Backbone views
  *
- * Version: 0.2.0 (Sun, 05 Oct 2014 23:23:10 GMT)
+ * Version: 0.2.0 (Mon, 06 Oct 2014 03:21:53 GMT)
  * Homepage: https://github.com/backbone-input/gamepad
  *
  * @author makesites
@@ -79,7 +79,7 @@ params.set({
 			// variables
 			var gamepad = e.gamepad || e.detail.gamepad;
 			// copy data to the event root
-			if(e.detail.gamepad) e.gamepad = e.detail.gamepad;
+			if(e.detail) e.gamepad = e.detail.gamepad; // is this even needed?
 			// flags
 			if( _.inDebug() ) console.log("connect", e);
 			if (e.stopPropagation) e.stopPropagation();
@@ -165,6 +165,7 @@ params.set({
 		},
 
 		initialize: function( options ) {
+			options = options || {};
 			// prerequisite
 			if(options.monitor) _.extend(this.options.monitor, options.monitor);
 			if( _.inArray("gamepad", this.options.monitor) ){
@@ -192,6 +193,7 @@ if( Layout ){
 		},
 
 		initialize: function( options ) {
+			options = options || {};
 			// prerequisite
 			if(options.monitor) _.extend(this.options.monitor, options.monitor);
 			if( _.inArray("gamepad", this.options.monitor) ){
