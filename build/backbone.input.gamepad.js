@@ -2,7 +2,7 @@
  * @name backbone.input.gamepad
  * Gamepad event bindings for Backbone views
  *
- * Version: 0.2.0 (Mon, 06 Oct 2014 03:21:53 GMT)
+ * Version: 0.2.0 (Mon, 06 Oct 2014 04:37:42 GMT)
  * Homepage: https://github.com/backbone-input/gamepad
  *
  * @author makesites
@@ -63,6 +63,10 @@ params.set({
 		},
 
 		// public methods
+		onClickGamepad: function( e ) {
+
+		},
+
 		onConnectGamepad: function( e ) {
 
 		},
@@ -166,11 +170,14 @@ params.set({
 
 		initialize: function( options ) {
 			options = options || {};
+			_.bindAll(this, 'onClickGamepad');
 			// prerequisite
 			if(options.monitor) _.extend(this.options.monitor, options.monitor);
 			if( _.inArray("gamepad", this.options.monitor) ){
 				this.monitorGamepad();
 				tick( _.bind(this._updateGamepads, this) );
+				// events
+				this.on("gamepadclick", this.onClickGamepad);
 			}
 			// continue...
 			return View.prototype.initialize.call(this, options);
@@ -199,6 +206,8 @@ if( Layout ){
 			if( _.inArray("gamepad", this.options.monitor) ){
 				this.monitorGamepad();
 				tick( _.bind(this._updateGamepads, this) );
+				// events
+				this.on("gamepadclick", this.onClickGamepad);
 			}
 			// continue...
 			return Layout.prototype.initialize.call(this, options);
