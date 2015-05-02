@@ -2,20 +2,38 @@
  * @name backbone.input.gamepad
  * Gamepad event bindings for Backbone views
  *
- * Version: 0.2.0 (Mon, 06 Oct 2014 04:37:42 GMT)
+ * Version: 0.2.0 (Sat, 02 May 2015 03:12:25 GMT)
  * Homepage: https://github.com/backbone-input/gamepad
  *
  * @author makesites
- * Created by: Makis Tracend (@tracend)
+ * Initiated by Makis Tracend (@tracend)
  *
  * @cc_on Copyright © Makesites.org
  * @license Dual-licensed: MIT license
  */
 
-(function(window, _, Backbone, APP) {
+(function (lib) {
 
+	//"use strict";
+
+	// Support module loaders
+	if (typeof define === 'function' && define.amd) {
+		// AMD. Register as an anonymous module.
+		define('backbone.input.gamepad', ['underscore', 'backbone'], lib);
+	} else if ( typeof module === "object" && module && typeof module.exports === "object" ){
+		// Expose as module.exports in loaders that implement CommonJS module pattern.
+		module.exports = lib;
+	} else {
+		// Browser globals
+		lib(window._, window.Backbone);
+	}
+
+}(function (_, Backbone) {
+
+	var APP = window.APP;
 	// support for Backbone APP() view if available...
 	var isAPP = ( typeof APP !== "undefined" && typeof APP.View !== "undefined" );
+
 	var View = ( isAPP ) ? APP.View : Backbone.View;
 	var Layout = ( isAPP ) ? APP.Layout : false;
 	var getGamepads = navigator.getGamepads || navigator.webkitGetGamepads || false;
@@ -282,5 +300,7 @@ if( Layout ){
 		window.Backbone = Backbone;
 	}
 
+	// for module loaders (returning the view)
+	return Gamepad;
 
-})(this.window, this._, this.Backbone, this.APP);
+}));
