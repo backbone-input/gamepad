@@ -2,7 +2,7 @@
  * @name backbone.input.gamepad
  * Gamepad event bindings for Backbone views
  *
- * Version: 0.2.0 (Sat, 02 May 2015 04:17:33 GMT)
+ * Version: 0.3.0 (Sat, 02 May 2015 04:20:33 GMT)
  * Homepage: https://github.com/backbone-input/gamepad
  *
  * @author makesites
