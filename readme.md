@@ -3,6 +3,14 @@
 A binding shell of the browser API for gamepads in Backbone views
 
 
+## Install
+
+Using bower:
+```
+bower install backbone.input.gamepad
+```
+
+
 ## Usage
 ```
 var MyView = Backbone.View.extend({
