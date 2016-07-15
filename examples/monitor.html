@@ -32,7 +32,7 @@ Based on the example written in 2013 by Ted Mielczarek <ted@mielczarek.org>
 </head>
 <body>
 
-<h2 id="start">Press a button on your controller to start</h2>
+<h2 id="start">Press a button on your controller to start monitoring</h2>
 
 <div id="main"></div>
 
@@ -65,14 +65,29 @@ Based on the example written in 2013 by Ted Mielczarek <ted@mielczarek.org>
 			<% }); %>
 		</div>
 		<div class="axes">
-			<% _.each(gamepad.axes, function(axes, i){ console.log(axes, axes.toFixed(4)); %>
+			<% _.each(gamepad.axes, function(axes, i){ %>
 				<progress class="axis" max="2" value="<%- axes +1 %>"><%- i %> : <%- axes.toFixed(4) %></progress>
 			<% }); %>
 		</div>
+		<h3>Raw</h3>
+		<ul id="states-<%=gamepad.index %>">
+			<% _.each(gamepad.state, function(control, i){ %>
+			<li><%- control %>: <span id="state-<%= gamepad.index %>-<%- control  %>"><%= gamepad.state[control] %></span></li>
+			<% }); %>
+			<% _.each(gamepad.buttons, function(button, i){ %>
+			<li>Raw Button <%- i %>: <span id="button-<%= gamepad.index %>-<%- i %>"><%- button.value %></span></li>
+			<% }); %>
+			<% _.each(gamepad.axes, function(value, i){ %>
+			<li>Raw Axis <%- i %>: <span id="axis-<%= gamepad.index %>-<%- i %>"><%- value %></span></li>
+			<% }); %>
+		</ul>
+
 	</div>
 
 </script>
+
 <script type="text/javascript">
+	DEBUG = false;
 	_.templateSettings.variable = "gamepad";
 
 	var Main = Backbone.View.extend({
