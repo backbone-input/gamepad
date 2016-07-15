@@ -3,6 +3,17 @@
 A binding shell of the browser API for gamepads in Backbone views
 
 
+## Features
+
+* Normalize input data
+* Propagate Events to views
+
+
+## Examples
+
+* [Raw Monitor](http://rawgit.com/backbone-input/gamepad/master/examples/monitor.html)
+
+
 ## Install
 
 Using bower:
@@ -18,7 +29,6 @@ var MyView = Backbone.View.extend({
 });
 
 ```
-see the [examples folder](./examples) for more details.
 
 
 ## Credits
