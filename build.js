@@ -23,8 +23,9 @@ _handlebars.registerHelper('license', function(items){
 // - concatinate all files
 concat({
 	src : [
-                'lib/options.js',
+		'lib/options.js',
 		'lib/buttons.js',
+		'lib/state.js',
 		'lib/params.js',
 		'lib/methods.js',
 		'lib/view.js',
