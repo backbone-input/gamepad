@@ -98,13 +98,13 @@ Based on the example written in 2013 by Ted Mielczarek <ted@mielczarek.org>
 
 		views: {},
 
-		onConnectGamepad: function( e ){
+		onGamepadConnect: function( e ){
 			this.views[e.gamepad.index] = new Gamepad({
 				model: new Backbone.Model( e.gamepad )
 			});
 		},
 
-		onDisconnectGamepad: function( e ){
+		onGamepadDisconnect: function( e ){
 			this.views[e.gamepad.index].remove();
 			delete this.views[e.gamepad.index];
 		},
