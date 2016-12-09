@@ -1,6 +1,6 @@
 {
 	"name": "backbone.input.gamepad",
-	"version": "0.3.5",
+	"version": "0.3.6",
 	"author": "makesites",
 	"description": "Gamepad event bindings for Backbone views",
 	"homepage": "https://github.com/backbone-input/gamepad",

@@ -2,14 +2,14 @@
  * @name backbone.input.gamepad
  * Gamepad event bindings for Backbone views
  *
- * Version: 0.3.5 (Tue, 06 Dec 2016 09:36:22 GMT)
+ * Version: 0.3.6 (Fri, 09 Dec 2016 00:47:02 GMT)
  * Homepage: https://github.com/backbone-input/gamepad
  *
  * @author makesites
  * Initiated by Makis Tracend (@tracend)
  *
  * @cc_on Copyright © Makesites.org
- * @license Dual-licensed: MIT license
+ * @license MIT license
  */
 
 (function (lib) {
@@ -19,23 +19,26 @@
 	// Support module loaders
 	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module.
-		define('backbone.input.gamepad', ['underscore', 'backbone'], lib);
+		define('backbone.input.gamepad', ['jquery', 'underscore', 'backbone'], lib);
 	} else if ( typeof module === "object" && module && typeof module.exports === "object" ){
 		// Expose as module.exports in loaders that implement CommonJS module pattern.
 		module.exports = lib;
 	} else {
 		// Browser globals
-		lib(window._, window.Backbone);
+		// - getting the available query lib
+		var $ = window.jQuery || window.Zepto || window.vQuery;
+		lib($, window._, window.Backbone);
 	}
 
-}(function (_, Backbone) {
+}(function ($, _, Backbone) {
 
-	var APP = window.APP;
 	// support for Backbone APP() view if available...
-	var isAPP = ( typeof APP !== "undefined" && typeof APP.View !== "undefined" );
+	var APP = APP || window.APP || null;
+	var isAPP = ( APP !== null );
 
-	var View = ( isAPP ) ? APP.View : Backbone.View;
-	var Layout = ( isAPP ) ? APP.Layout : false;
+	var View = ( isAPP && typeof APP.View !== "undefined" ) ? APP.View : Backbone.View;
+	var Layout = ( isAPP && typeof APP.Layout !== "undefined" ) ? APP.Layout : false;
+
 	var getGamepads = navigator.getGamepads || navigator.webkitGamepads || navigator.webkitGetGamepads || false;
 	var scanInterval;
 
@@ -90,6 +93,14 @@ var defaults = {
 	};
 
 // extend existing params
+var state = View.prototype.params || new Backbone.Model();
+
+// defaults
+state.set({
+	gamepadButtons: []
+});
+
+// extend existing params
 var params = View.prototype.params || new Backbone.Model();
 
 // defaults
@@ -107,40 +118,43 @@ params.set({
 			return Object.keys( gamepads ).length;
 		},
 
-		/* events:*/
+		// interface methods
 		monitorGamepad: function( state ){
 			// fallback
 			if(typeof state == "undefined") state = true;
 
 			if( state && getGamepads){
-				window.addEventListener("gamepadconnected", _.bind(this._onConnectGamepad, this));
-				window.addEventListener("gamepaddisconnected", _.bind(this._onDisconnectGamepad, this));
+				window.addEventListener('gamepadconnected', _.bind(this._onGamepadConnect, this), false );
+				window.addEventListener('gamepaddisconnected', _.bind(this._onGamepadDisconnect, this), false );
 				// watch for new connections
 				scanInterval = setInterval( _.bind(this._scanGamepads, this), 500);
-
+				// broadcast event
+				this.trigger('monitor-gamepad-on');
 			} else {
-				window.removeEventListener("gamepadconnected");
-				window.removeEventListener("gamepaddisconnected");
+				window.removeEventListener('gamepadconnected', _.bind(this._onGamepadConnect, this), false );
+				window.removeEventListener('gamepaddisconnected', _.bind(this._onGamepadDisconnect, this), false );
 				clearInterval(scanInterval);
+				// broadcast event
+				this.trigger('monitor-gamepad-off');
 			}
 
 		},
 
-		// public methods
-		onClickGamepad: function( e ) {
+		// events
+		onGamepadClick: function( e ) {
 
 		},
 
-		onConnectGamepad: function( e ) {
+		onGamepadConnect: function( e ) {
 
 		},
 
-		onDisconnectGamepad: function( e ) {
+		onGamepadDisconnect: function( e ) {
 
 		},
 
 		// private methods
-		_onConnectGamepad: function( e ) {
+		_onGamepadConnect: function( e ) {
 			// prerequisite
 			var monitor = _.inArray("gamepad", this.options.monitor);
 			if( !monitor ) return this.monitorGamepad(false);
@@ -158,11 +172,15 @@ params.set({
 			this.params.set({
 				gamepads : gamepads
 			});
+			// broadcast event
+			this.trigger('gamepad-connect', { originalEvent: e });
+			// update state?
 			//this.state.play = true;
-			if(this.onConnectGamepad) return this.onConnectGamepad( e );
+			// app-specific logic
+			return this.onGamepadConnect( e );
 		},
 
-		_onDisconnectGamepad: function( e ) {
+		_onGamepadDisconnect: function( e ) {
 			// prerequisite
 			var monitor = _.inArray("gamepad", this.options.monitor);
 			if( !monitor ) return this.monitorGamepad(false);
@@ -176,9 +194,13 @@ params.set({
 			this.params.set({
 				gamepads : gamepads
 			});
+
+			// broadcast event
+			this.trigger('gamepad-disconnect', { originalEvent: e }); // Gamepad.Event.DISCONNECTED, e.gamepad
+			// update state?
 			//this.state.play = false;
-			this.trigger("gamepaddisconnected", e); // Gamepad.Event.DISCONNECTED, e.gamepad
-			if(this.onDisconnectGamepad) return this.onDisconnectGamepad( e );
+			// app-specific logic
+			return this.onGamepadDisconnect( e );
 		},
 
 		_scanGamepads: function(){
@@ -243,7 +265,7 @@ params.set({
 					val = b;
 					pressed = b == 1.0;
 				}
-				console.log("Button %d: %s (%f)", i, pressed ? "pressed" : "not pressed", val);
+				//console.log("Button %d: %s (%f)", i, pressed ? "pressed" : "not pressed", val);
 			}
 		},
 
@@ -587,22 +609,20 @@ params.set({
 			monitor: [] // possible values: "gamepad"
 		},
 
-		params: params,
+		params: params.clone(),
 
-		state : {
-			gamepadButtons: []
-		},
+		state : state.clone(),
 
 		initialize: function( options ) {
 			options = options || {};
-			_.bindAll(this, 'onClickGamepad');
+			_.bindAll(this, 'onGamepadClick');
 			// prerequisite
 			if(options.monitor) _.extend(this.options.monitor, options.monitor);
 			if( _.inArray("gamepad", this.options.monitor) ){
 				this.monitorGamepad();
 				tick( _.bind(this._updateGamepads, this) );
 				// events
-				this.on("gamepadclick", this.onClickGamepad);
+				this.on("gamepadclick", this.onGamepadClick);
 			}
 			// continue...
 			return Gamepad.__super__.initialize.call(this, options);
@@ -620,9 +640,7 @@ if( Layout ){
 
 		params: params, // create different params for the layout?
 
-		state : {
-			gamepadButtons: []
-		},
+		state : state.clone(),
 
 		initialize: function( options ) {
 			options = options || {};
@@ -641,6 +659,7 @@ if( Layout ){
 	}) );
 
 }
+
 
 	// Helpers
 
@@ -673,38 +692,22 @@ if( Layout ){
 
 
 
-	// fallbacks
-	if( _.isUndefined( Backbone.Input ) ) Backbone.Input = {};
+	// update Backbone namespace regardless
+	Backbone.Input = Backbone.Input ||{};
 	Backbone.Input.Gamepad = Gamepad;
-
-	// Support module loaders
-	if ( typeof module === "object" && module && typeof module.exports === "object" ) {
-		// Expose as module.exports in loaders that implement CommonJS module pattern.
-		module.exports = Gamepad;
-	} else {
-		// Register as a named AMD module, used in Require.js
-		if ( typeof define === "function" && define.amd ) {
-			//define( "backbone.input.mouse", [], function () { return Gamepad; } );
-			//define( ['underscore', 'backbone'], function () { return Gamepad; } );
-			define( [], function () { return Gamepad; } );
-		}
+	// update APP namespace
+	if( isAPP ){
+		APP.Input = APP.Input || {};
+		APP.Input.Gamepad = Gamepad;
 	}
+
 	// If there is a window object, that at least has a document property
-	if ( typeof window === "object" && typeof window.document === "object" ) {
+	if( typeof window === "object" && typeof window.document === "object" ){
+		window.Backbone = Backbone;
 		// update APP namespace
 		if( isAPP ){
-			APP.View = Gamepad;
-			APP.Layout = GamepadLayout;
-			APP.Input = APP.Input || {};
-			APP.Input.Gamepad = Backbone.Input.Gamepad;
-			// save namespace
 			window.APP = APP;
-		} else {
-			// update Backbone namespace
-			Backbone.View = Gamepad;
 		}
-		// save Backbone namespace either way
-		window.Backbone = Backbone;
 	}
 
 	// for module loaders (returning the view)
