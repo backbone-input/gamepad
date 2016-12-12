@@ -90,7 +90,7 @@ Based on the example written in 2013 by Ted Mielczarek <ted@mielczarek.org>
 	DEBUG = false;
 	_.templateSettings.variable = "gamepad";
 
-	var Main = Backbone.View.extend({
+	var Main = Backbone.Input.Gamepad.extend({
 		el: "#main",
 		options: {
 			monitor: ["gamepad"]
